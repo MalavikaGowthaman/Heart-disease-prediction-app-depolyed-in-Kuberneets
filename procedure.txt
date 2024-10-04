@@ -1,0 +1,134 @@
+Note: before this procedure , your flask ml project should work locally. make sure you have requirements.txt which has supporting library.
+
+Step1: Create Google Account
+Step2: Go to Google Console
+Step3: Activate the free Credits
+Step4: Go to IAM from left side three stacked horizontal line 
+Step5: In the left side option "Managed Resource",
+Step6: Click "Create Project"
+Step7: In Project Id: "give proper project name in lower case"
+Step8: Download Google Cloud SDK using below link 
+
+https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKinstaller.exe
+
+Stpe9: Install the downloaded .exe file.
+
+Step10: Download Docker SDK
+
+from below link you can download the docker for windows`1
+
+https://docs.docker.com/desktop/install/windows-install/
+
+Step11: Install the downloaded file 
+
+Step12: After installation, open --> Command Prompt
+
+Step13:Navigate to the working Directory
+
+Step14: issue this command "docker --version" --> if it is installed properly, it gives the docker version.
+
+Step15: Download and install 
+
+https://kubernetes.io/releases/download/#binaries
+
+Step16:Goto command prompt
+
+kubectl version --client
+
+gcloud auth login
+
+gcloud init
+
+gcloud config set project heartkuberneteesgcp
+
+gcloud services enable cloudbuild.googleapis.com
+
+docker build -t malavikagowthaman/heart_ml_app .
+
+docker tag malavikagowthaman/heart_ml_app gcr.io/heartkuberneteesgcp/heart_ml_app
+
+docker push gcr.io/malavikagowthaman/heart_ml_app
+
+gcloud auth configure-docker
+
+gcloud services enable container.googleapis.com
+
+gcloud container clusters create heart-ml-app --zone us-central1-a --num-nodes=1
+
+gcloud container clusters get-credentials heart-ml-app --zone us-central1-a
+
+
+gcloud components update
+
+gcloud components install gke-gcloud-auth-plugin
+
+if error cones
+
+open "google cloud sdk shell" --> run as a adminstartor-->gcloud components install gke-gcloud-auth-plugin
+
+
+
+
+kubectl apply -f heart-ml-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ckds-ml-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ckds-ml-app
+  template:
+    metadata:
+      labels:
+        app: ckds-ml-app
+    spec:
+      containers:
+      - name: ckds-ml-app
+        image: gcr.io/ckdkubernetes/ckds_ml_app
+        ports:
+        - containerPort: 8080  # Change to 8080 if that is your app's listening port
+
+
+
+kubectl apply -f heart-ml-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ckds-ml-app-service
+spec:
+  selector:
+    app: ckds-ml-app
+  ports:
+    - protocol: TCP
+      port: 80         # External Port that users will access
+      targetPort: 8080 # The port your app is running on inside the container
+  type: LoadBalancer
+
+
+kubectl get svc
+
+go to kubernetes engine -->gatesways,service and ingress
+
+
+gcloud container clusters list --project heartkuberneteesgcp
+
+gcloud container clusters delete heart-ml-app  --zone us-central1-a --project heartkuberneteesgcp
+
+
+gcloud container clusters delete heart-ml-app-service --zone us-central1-a
+
+
+other
+
+kubectl describe pod ckd-ml-deployment-6d6bf7dc87-7flnq
+
+kubectl logs ckd-ml-deployment-6d6bf7dc87-7flnq
+
+
+
+
+

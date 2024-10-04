@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: heart-ml-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: heart-ml-app
+  template:
+    metadata:
+      labels:
+        app: heart-ml-app
+    spec:
+      containers:
+      - name: heart-ml-app
+        image: gcr.io/heartkuberneteesgcp/heart_ml_app
+        ports:
+        - containerPort: 8080  # Change to 8080 if that is your app's listening port
